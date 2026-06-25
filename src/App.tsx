@@ -1,122 +1,87 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import { PrivateRoute } from './components/PrivateRoute';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Public Pages
+import { Home } from './pages/Home';
+import { AllTickets } from './pages/AllTickets';
+import { TicketDetails } from './pages/TicketDetails';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import { Error404 } from './pages/Error404';
 
+// Dashboard Layout & Shared Pages
+import { DashboardLayout } from './layouts/DashboardLayout';
+import { UserProfile } from './pages/Dashboard/UserProfile';
+
+// User Dashboard Pages
+import { MyBookings } from './pages/Dashboard/User/MyBookings';
+import { PayBooking } from './pages/Dashboard/User/PayBooking';
+import { MyTransactions } from './pages/Dashboard/User/MyTransactions';
+
+// Vendor Dashboard Pages
+import { AddTicket } from './pages/Dashboard/Vendor/AddTicket';
+import { MyTickets } from './pages/Dashboard/Vendor/MyTickets';
+import { RequestedBookings } from './pages/Dashboard/Vendor/RequestedBookings';
+import { VendorRevenue } from './pages/Dashboard/Vendor/VendorRevenue';
+
+// Admin Dashboard Pages
+import { AdminStats } from './pages/Dashboard/Admin/AdminStats';
+import { ManageTickets } from './pages/Dashboard/Admin/ManageTickets';
+import { ManageUsers } from './pages/Dashboard/Admin/ManageUsers';
+import { AdvertiseTickets } from './pages/Dashboard/Admin/AdvertiseTickets';
+
+const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">{children}</main>
+      <Footer />
+    </div>
+  );
+};
 
-      <div className="ticks"></div>
+export const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+        <Route path="/tickets" element={<PublicLayout><AllTickets /></PublicLayout>} />
+        <Route path="/tickets/:id" element={<PublicLayout><TicketDetails /></PublicLayout>} />
+        <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+        <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Dashboard Role-based Routes */}
+        <Route path="/dashboard" element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
+          {/* Shared Portal Landing */}
+          <Route index element={<UserProfile />} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+          {/* User Specific Paths */}
+          <Route path="bookings" element={<PrivateRoute allowedRoles={['user']}><MyBookings /></PrivateRoute>} />
+          <Route path="pay/:id" element={<PrivateRoute allowedRoles={['user']}><PayBooking /></PrivateRoute>} />
+          <Route path="transactions" element={<PrivateRoute allowedRoles={['user']}><MyTransactions /></PrivateRoute>} />
 
-export default App
+          {/* Vendor Specific Paths */}
+          <Route path="add-ticket" element={<PrivateRoute allowedRoles={['vendor']}><AddTicket /></PrivateRoute>} />
+          <Route path="my-tickets" element={<PrivateRoute allowedRoles={['vendor']}><MyTickets /></PrivateRoute>} />
+          <Route path="requested-bookings" element={<PrivateRoute allowedRoles={['vendor']}><RequestedBookings /></PrivateRoute>} />
+          <Route path="revenue" element={<PrivateRoute allowedRoles={['vendor']}><VendorRevenue /></PrivateRoute>} />
+
+          {/* Admin Specific Paths */}
+          <Route path="stats" element={<PrivateRoute allowedRoles={['admin']}><AdminStats /></PrivateRoute>} />
+          <Route path="manage-tickets" element={<PrivateRoute allowedRoles={['admin']}><ManageTickets /></PrivateRoute>} />
+          <Route path="manage-users" element={<PrivateRoute allowedRoles={['admin']}><ManageUsers /></PrivateRoute>} />
+          <Route path="advertise" element={<PrivateRoute allowedRoles={['admin']}><AdvertiseTickets /></PrivateRoute>} />
+        </Route>
+
+        {/* Fallback 404 Route */}
+        <Route path="*" element={<PublicLayout><Error404 /></PublicLayout>} />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
