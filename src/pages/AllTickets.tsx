@@ -3,6 +3,23 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { CardSkeleton } from '../components/SkeletonLoader';
 import { Search } from 'lucide-react';
+import { getTransportImage } from '../utils/imageMapper';
+
+const getBadgeStyles = (type: string) => {
+  const normalized = type?.toLowerCase() || '';
+  if (normalized === 'flight') return 'bg-cyan-50 dark:bg-cyan-950/20 text-cyan-700 dark:text-cyan-400 border border-cyan-200/40 dark:border-cyan-900/40';
+  if (normalized === 'bus') return 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-900/40';
+  if (normalized === 'train') return 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border border-indigo-200/40 dark:border-indigo-900/40';
+  return 'bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 border border-blue-200/40 dark:border-blue-900/40';
+};
+
+const getTransportIcon = (type: string) => {
+  const normalized = type?.toLowerCase() || '';
+  if (normalized === 'flight') return '✈️';
+  if (normalized === 'bus') return '🚌';
+  if (normalized === 'train') return '🚆';
+  return '🚢';
+};
 
 interface Ticket {
   _id: string;
@@ -135,28 +152,36 @@ export const AllTickets: React.FC = () => {
         <div className="space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {tickets.map((ticket) => (
-              <div key={ticket._id} className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/50 rounded-2xl overflow-hidden hover:shadow-xl transition-all group flex flex-col justify-between">
-                <img src={ticket.image} alt={ticket.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div key={ticket._id} className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                <div className="relative overflow-hidden">
+                  <img src={getTransportImage(ticket.transportType, ticket.image)} alt={ticket.title} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                </div>
                 <div className="p-6 space-y-4 flex-grow flex flex-col justify-between">
                   <div className="space-y-2">
-                    <span className="text-xs font-semibold uppercase text-blue-600 dark:text-blue-400">{ticket.transportType}</span>
-                    <h3 className="font-bold text-lg leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{ticket.title}</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{ticket.from} &rarr; {ticket.to}</p>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <span className={`inline-flex items-center gap-1 text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full ${getBadgeStyles(ticket.transportType)}`}>
+                      <span className="text-xs">{getTransportIcon(ticket.transportType)}</span> {ticket.transportType}
+                    </span>
+                    <h3 className="font-extrabold text-lg leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{ticket.title}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-bold flex items-center space-x-1.5">
+                      <span>{ticket.from}</span>
+                      <span className="text-slate-400 font-normal">➔</span>
+                      <span>{ticket.to}</span>
+                    </p>
+                    <p className="text-[11px] font-semibold text-slate-400 mt-1.5 bg-slate-50 dark:bg-slate-850 px-2 py-1 rounded w-fit">
                       Departs: {new Date(ticket.departureTime).toLocaleDateString()} at {new Date(ticket.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap pt-2">
                     {ticket.perks.slice(0, 3).map((p, idx) => (
-                      <span key={idx} className="bg-slate-100 dark:bg-slate-800 text-[10px] font-medium px-2 py-1 rounded-md">{p}</span>
+                      <span key={idx} className="bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-350 border border-slate-100 dark:border-slate-800/50 text-[10px] font-bold px-2.5 py-1 rounded-lg">{p}</span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4 mt-4">
+                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/60 pt-4 mt-4">
                     <div>
-                      <p className="text-xs text-slate-400">Price per Seat</p>
-                      <p className="text-xl font-extrabold text-slate-900 dark:text-white">${ticket.price}</p>
+                      <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Price per Seat</p>
+                      <p className="text-2xl font-black text-blue-600 dark:text-blue-400">${ticket.price}</p>
                     </div>
-                    <Link to={'/tickets/' + ticket._id} className="btn btn-primary btn-sm bg-blue-600 border-none hover:bg-blue-700 text-white rounded-lg px-4">
+                    <Link to={'/tickets/' + ticket._id} className="btn btn-primary btn-sm bg-blue-600 border-none hover:bg-blue-700 text-white rounded-xl px-5 font-bold shadow-md shadow-blue-500/15">
                       See Details
                     </Link>
                   </div>

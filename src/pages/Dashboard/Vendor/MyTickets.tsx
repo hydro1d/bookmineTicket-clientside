@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
 import { TableSkeleton } from '../../../components/SkeletonLoader';
-import { List, Trash2, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { List, Trash2 } from 'lucide-react';
 
 interface Ticket {
   _id: string;

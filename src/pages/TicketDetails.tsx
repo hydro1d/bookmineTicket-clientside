@@ -4,6 +4,15 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { CountdownTimer } from '../components/CountdownTimer';
 import { SeatMap } from '../components/SeatMap';
+import { getTransportImage } from '../utils/imageMapper';
+
+const getBadgeStyles = (type: string) => {
+  const normalized = type?.toLowerCase() || '';
+  if (normalized === 'flight') return 'bg-cyan-500 text-white';
+  if (normalized === 'bus') return 'bg-emerald-500 text-white';
+  if (normalized === 'train') return 'bg-indigo-500 text-white';
+  return 'bg-blue-500 text-white';
+};
 
 interface Ticket {
   _id: string;
@@ -101,11 +110,11 @@ export const TicketDetails: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-7 space-y-6">
-          <div className="relative h-96 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800">
-            <img src={ticket.image} alt={ticket.title} className="w-full h-full object-cover" />
-            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950/80 to-transparent p-6 text-white flex flex-col justify-end">
-              <span className="text-xs uppercase bg-blue-600 px-2 py-1 rounded-md w-fit font-bold tracking-widest">{ticket.transportType}</span>
-              <h1 className="text-2xl sm:text-4xl font-extrabold mt-2 leading-tight">{ticket.title}</h1>
+          <div className="relative h-96 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md">
+            <img src={getTransportImage(ticket.transportType, ticket.image)} alt={ticket.title} className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent p-8 text-white flex flex-col justify-end">
+              <span className={`text-[10px] uppercase px-3 py-1 rounded-full w-fit font-black tracking-widest ${getBadgeStyles(ticket.transportType)}`}>{ticket.transportType}</span>
+              <h1 className="text-2xl sm:text-4xl font-extrabold mt-3 leading-tight">{ticket.title}</h1>
             </div>
           </div>
 

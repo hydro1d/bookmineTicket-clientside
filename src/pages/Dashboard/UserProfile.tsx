@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ShieldCheck, Mail, Calendar, UserCheck } from 'lucide-react';
+import { ShieldCheck, UserCheck } from 'lucide-react';
 
 export const UserProfile: React.FC = () => {
   const { user } = useAuth();

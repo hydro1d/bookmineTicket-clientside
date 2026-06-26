@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
 import { TableSkeleton } from '../../../components/SkeletonLoader';
-import { ShieldCheck, ShieldAlert, UserCheck } from 'lucide-react';
+import { ShieldCheck, ShieldAlert } from 'lucide-react';
 
 interface User {
   _id: string;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
@@ -10,6 +10,7 @@ export const Login: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -84,13 +85,20 @@ export const Login: React.FC = () => {
           <div className="relative">
             <Lock className="w-4 h-4 absolute left-3 top-3.5 text-slate-400" />
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="input input-bordered w-full pl-10 bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-900"
+              className="input input-bordered w-full pl-10 pr-10 bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-900"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
         </div>
 

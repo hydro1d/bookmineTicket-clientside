@@ -5,7 +5,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import api from '../../../services/api';
 import { ShieldCheck, CreditCard } from 'lucide-react';
 
-const stripePromise = loadStripe('pk_test_51PxTjS2NMockStripeKeyValuesHere');
+const stripePromise = loadStripe((import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string) || 'pk_test_51PxTjS2NMockStripeKeyValuesHere');
 
 const CheckoutForm: React.FC<{ bookingId: string; clientSecret: string; amount: number; onSuccess: () => void }> = ({
   bookingId,

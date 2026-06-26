@@ -186,6 +186,15 @@ export const MyBookings: React.FC = () => {
                         )}>
                           {booking.status}
                         </span>
+                        {booking.status === 'pending' && (
+                          <div className="text-[10px] text-slate-400 mt-1 font-semibold">Awaiting operator approval</div>
+                        )}
+                        {booking.status === 'accepted' && (
+                          <div className="text-[10px] text-blue-600 dark:text-blue-400 font-bold mt-1 animate-pulse">Ready for payment</div>
+                        )}
+                        {booking.status === 'paid' && (
+                          <div className="text-[10px] text-green-600 dark:text-green-400 font-semibold mt-1">Ticket Issued</div>
+                        )}
                       </td>
                       <td>
                         <div className="flex items-center space-x-2">

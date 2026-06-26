@@ -8,6 +8,7 @@ export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,24 +43,35 @@ export const Navbar: React.FC = () => {
             </button>
 
             {user ? (
-              <div className="dropdown dropdown-end">
-                <label tabIndex={0} className="btn btn-ghost btn-circle avatar border border-slate-200 dark:border-slate-800">
+              <div className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center btn btn-ghost btn-circle avatar border border-slate-200 dark:border-slate-800 focus:outline-none"
+                >
                   <div className="w-10 rounded-full">
                     <img src={user.avatar} alt={user.name} />
                   </div>
-                </label>
-                <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 dark:bg-slate-900 rounded-box w-52 border border-slate-200/50 dark:border-slate-800/50">
-                  <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-850">
-                    <p className="font-bold text-slate-800 dark:text-slate-200 truncate">{user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate capitalize">{user.role}</p>
-                  </div>
-                  <li>
-                    <Link to="/dashboard" className="flex items-center py-2"><LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard</Link>
-                  </li>
-                  <li>
-                    <button onClick={handleLogout} className="flex items-center text-red-500 py-2"><LogOut className="w-4 h-4 mr-2" /> Logout</button>
-                  </li>
-                </ul>
+                </button>
+                {dropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30"
+                      onClick={() => setDropdownOpen(false)}
+                    />
+                    <ul className="absolute right-0 mt-3 z-40 p-2 shadow-2xl menu menu-sm bg-white dark:bg-slate-900 rounded-box w-52 border border-slate-200/50 dark:border-slate-800/50">
+                      <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                        <p className="font-bold text-slate-850 dark:text-slate-200 truncate">{user.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate capitalize font-semibold">{user.role}</p>
+                      </div>
+                      <li>
+                        <Link to="/dashboard" onClick={() => setDropdownOpen(false)} className="flex items-center py-2 text-slate-700 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-850"><LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard</Link>
+                      </li>
+                      <li>
+                        <button onClick={() => { setDropdownOpen(false); handleLogout(); }} className="flex items-center text-red-500 py-2 w-full text-left"><LogOut className="w-4 h-4 mr-2" /> Logout</button>
+                      </li>
+                    </ul>
+                  </>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-3">
